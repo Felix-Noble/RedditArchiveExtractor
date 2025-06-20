@@ -1,0 +1,28 @@
+# config/config.yaml
+# ===============================================
+
+# --- Logging ---
+logging:
+  level: INFO
+  format: "%(asctime)s - %(levelname)s - %(message)s"
+  file: "logs/pipeline.log"
+
+# --- File Paths ---
+paths:
+  data_directory: "D:/data/MEAMs/reddit/"
+  output_directory: "data/03_results"
+
+# --- Extraction ---
+filter:
+  # A list of subreddit names to extract. 
+  # This is case-sensitive, so match the names exactly.
+  target_subreddits:
+    - LetsTalkMusic
+
+processing:
+  # The number of records to hold in memory before writing to the output file.
+  # This helps balance memory usage and disk I/O.
+  batch_size: 10000
+  num_workers : 4
+# --- Decompression Parameters ---
+zstd_max_window_size: 2147483648
