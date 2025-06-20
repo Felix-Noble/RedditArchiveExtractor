@@ -1,5 +1,5 @@
 # Reddit Archive Extractor
-This tool offers fast, low-memory decompression of .zst archives with progress tracking bars for each file. 
+This tool offers batch decompression of .zst archives with progress tracking bars for each file. 
 
 Paralell option included (testing incomplete)
 # Requirements
