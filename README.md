@@ -55,10 +55,10 @@ The script will find all .zst files in your data_directory, process them in para
 
 (Optional) Specify a different config fileIf your config file is not named config.yaml or is in another directory, use the --config flag to point to it:
 ~~~
-python process_archives.py --config /path/to/your/settings.yaml
+python src/process_archives.py --config ./path/to/your/settings.yaml
 ~~~
 
 Or, to process several archives in paralell
 ~~~
-python process_multiple_archives.py --config /path/to/your/settings.yaml
+python arc/process_multiple_archives.py --config ./path/to/your/settings.yaml
 ~~~
