@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # process_archives.py
 
 import os
