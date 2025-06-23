@@ -1,26 +1,9 @@
 # Reddit Archive Extractor
-A Python script to process large Zstandard-compressed (.zst) Reddit archives, filter them by subreddit, and save the results efficiently. 
-This tool is optimized for handling very large datasets by using multiprocessing to leverage multiple CPU cores.
+This tool offers batch decompression of .zst archives with progress tracking bars for each file. 
 
-# Features
-High-Speed Decompression: Uses the zstandard library for fast, streaming decompression of .zst archives.
-
-Parallel Processing: Utilizes Python's multiprocessing module to process multiple large files simultaneously.
-
-Memory Use: Streams data line-by-line, keeping memory usage low.
-
-Clear Progress Tracking: Displays per-file progress bars showing the processing speed (in MB/s) and completion status.
-
-Configurable: All settings are managed in a simple config.yaml file.
-
+Paralell option included (testing incomplete)
 # Requirements
-You will need Python 3.7+ and the following libraries:
-
-zstandard: For Zstandard decompression.
-
-PyYAML: For reading the config.yaml file.
-
-tqdm: For displaying progress bars.
+Python 3.7+ and the following libraries: zstandard, PyYAML (config), tqdm (progress bars)
 
 # Setup
 Install Libraries:
@@ -72,5 +55,10 @@ The script will find all .zst files in your data_directory, process them in para
 
 (Optional) Specify a different config fileIf your config file is not named config.yaml or is in another directory, use the --config flag to point to it:
 ~~~
-python process_archives.py --config /path/to/your/settings.yaml
+python src/process_archives.py --config ./path/to/your/settings.yaml
+~~~
+
+Or, to process several archives in paralell
+~~~
+python arc/process_multiple_archives.py --config ./path/to/your/settings.yaml
 ~~~
