@@ -9,6 +9,7 @@ import io
 import zstandard as zst
 import yaml
 from tqdm import tqdm
+from pathlib import Path
 
 # NEW: A helper class to wrap a file object and update the progress bar on each read.
 class TqdmFileReader:
@@ -74,28 +75,33 @@ def find_zst_files(directory: str) -> list[str]:
 def process_and_filter_files(
     file_paths: list[str],
     target_subreddits: set[str],
-    output_file: str,
+    output_dir: Path,
     batch_size: int
 ):
     """
     Processes a list of .zst files, filters for target subreddits,
     and saves the matching records to a single output file.
     """
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
-    total_records_found = 0
     
-    with open(output_file, 'w', encoding='utf-8') as f_out:
-        for file_path in file_paths:
-            logging.info(f"Starting to process: {file_path}")
+    for file in file_paths:
+        base_name, _ = os.path.splitext(os.path.basename(file))
+        output = output_dir / (base_name + ".jsonl")
+        print(output)
+        print("FFFFF")
+        os.makedirs(os.path.dirname(output), exist_ok=True)
+        total_records_found = 0
+
+        with open(output, 'w', encoding='utf-8') as f_out:
+            logging.info(f"Starting to process: {file}")
             
             # Get the compressed file size for the progress bar total
-            file_size_bytes = os.path.getsize(file_path)
+            file_size_bytes = os.path.getsize(file)
             file_records_found = 0
             
             # Set up the progress bar to track bytes
-            with tqdm(total=file_size_bytes, unit='B', unit_scale=True, desc=f"Processing {os.path.basename(file_path)}") as pbar:
+            with tqdm(total=file_size_bytes, unit='B', unit_scale=True, desc=f"Processing {os.path.basename(file)}") as pbar:
                 try:
-                    with open(file_path, 'rb') as f_in:
+                    with open(file, 'rb') as f_in:
                         # Wrap the binary file reader with our TqdmFileReader
                         wrapped_reader = TqdmFileReader(f_in, pbar)
                         
@@ -125,14 +131,14 @@ def process_and_filter_files(
                             batch.clear()
 
                 except (zst.ZstdError, IOError) as e:
-                    logging.error(f"Error processing {file_path}: {e}")
+                    logging.error(f"Error processing {file}: {e}")
                     continue # Skip to the next file
 
             total_records_found += file_records_found
-            logging.info(f"Finished processing {file_path}. Found {file_records_found} matching records.")
+            logging.info(f"Finished processing {file}. Found {file_records_found} matching records.")
 
     logging.info(f"All files processed. Total matching records found: {total_records_found}")
-    logging.info(f"Filtered data saved to: {output_file}")
+    logging.info(f"Filtered data saved to: {output}")
 
 
 def main():
@@ -152,7 +158,7 @@ def main():
     config = load_config(args.config)
 
     data_dir = config.get("paths", {}).get("data_directory")
-    output_dir = config.get("paths", {}).get("output_directory")
+    output_dir = Path(config.get("paths", {}).get("output_directory"))
     target_subreddits = set(config.get("filter", {}).get("target_subreddits", []))
     batch_size = config.get("processing", {}).get("batch_size", 1000)
 
@@ -163,11 +169,11 @@ def main():
         logging.warning("No 'target_subreddits' defined in config. No data will be filtered.")
         return
 
-    output_file_path = os.path.join(output_dir, "filtered_records.jsonl")
 
     zst_files = find_zst_files(data_dir)
+
     if zst_files:
-        process_and_filter_files(zst_files, target_subreddits, output_file_path, batch_size)
+        process_and_filter_files(zst_files, target_subreddits, output_dir, batch_size)
     else:
         logging.warning("No .zst files to process. Exiting.")
 

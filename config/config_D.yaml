@@ -10,7 +10,7 @@ logging:
 # --- File Paths ---
 paths:
   data_directory: "D:/data/MEAMs/reddit/"
-  output_directory: "data/03_results"
+  output_directory: "data/04_results"
 
 # --- Extraction ---
 filter:
